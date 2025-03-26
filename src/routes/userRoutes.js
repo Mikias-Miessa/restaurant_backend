@@ -15,6 +15,9 @@ const router = express.Router();
 // Public routes
 router.post("/login", loginUser);
 
+// Protected routes for all authenticated users
+router.get("/profile", authMiddleware, getProfile);
+
 // Protected routes (admin only)
 router.get("/", [authMiddleware, adminMiddleware], getUsers);
 router.post("/register", [authMiddleware, adminMiddleware], registerUser);
