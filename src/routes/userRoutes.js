@@ -4,14 +4,21 @@ const {
   loginUser,
   updateUser,
   getProfile,
+  getUsers,
+  deleteUser,
 } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const router = express.Router();
 
-router.post("/register", registerUser);
+// Public routes
 router.post("/login", loginUser);
-router.get("/profile", authMiddleware, getProfile);
-router.put("/update", authMiddleware, updateUser);
+
+// Protected routes (admin only)
+router.get("/", [authMiddleware, adminMiddleware], getUsers);
+router.post("/register", [authMiddleware, adminMiddleware], registerUser);
+router.put("/:id", [authMiddleware, adminMiddleware], updateUser);
+router.delete("/:id", [authMiddleware, adminMiddleware], deleteUser);
 
 module.exports = router;
