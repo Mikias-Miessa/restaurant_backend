@@ -12,6 +12,8 @@ const { Server } = require("socket.io");
 // Load environment variables
 dotenv.config();
 
+const seedAdmin = require("./src/database/seeders/adminSeeder");
+
 // Initialize express app
 const app = express();
 const httpServer = createServer(app);
@@ -33,7 +35,11 @@ mongoose
     socketTimeoutMS: 45000, // Close sockets after 45s
     family: 4, // Use IPv4, skip trying IPv6
   })
-  .then(() => console.log("MongoDB connected successfully"))
+  .then(() => {
+    console.log("MongoDB connected successfully");
+    // Call seedAdmin after successful connection
+    seedAdmin();
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Socket.IO connection handling
