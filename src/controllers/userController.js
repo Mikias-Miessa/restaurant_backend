@@ -152,3 +152,46 @@ exports.deleteUser = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const { username, currentPassword, newPassword } = req.body;
+
+    // If updating username
+    if (username) {
+      // Check if new username is already taken
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+        return res.status(400).send("Username already exists");
+      }
+      user.username = username;
+    }
+
+    // If updating password
+    if (currentPassword && newPassword) {
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+      if (!isValidPassword) {
+        return res.status(401).send("Current password is incorrect");
+      }
+
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    await user.save();
+    res.json({ message: "Profile updated successfully" });
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};

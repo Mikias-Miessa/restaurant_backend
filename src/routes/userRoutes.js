@@ -6,6 +6,7 @@ const {
   getProfile,
   getUsers,
   deleteUser,
+  updateProfile,
 } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
@@ -17,6 +18,7 @@ router.post("/login", loginUser);
 
 // Protected routes for all authenticated users
 router.get("/profile", authMiddleware, getProfile);
+router.put("/profile", authMiddleware, updateProfile);
 
 // Protected routes (admin only)
 router.get("/", [authMiddleware, adminMiddleware], getUsers);
