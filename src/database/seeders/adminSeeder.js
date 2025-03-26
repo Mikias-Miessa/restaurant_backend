@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/User"); // Adjust the path according to your model location
+const User = require("../../models/User");
 
 async function seedAdmin() {
   try {
